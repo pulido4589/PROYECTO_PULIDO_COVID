@@ -1,0 +1,292 @@
+{
+	"name": "Ds_silver_csv",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "covid_global.csv",
+				"folderPath": "Silver/covid",
+				"container": "data"
+			},
+			"columnDelimiter": ",",
+			"rowDelimiter": "\n",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"nullValue": "0.0",
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "continent",
+				"type": "String"
+			},
+			{
+				"name": "location",
+				"type": "String"
+			},
+			{
+				"name": "date",
+				"type": "String"
+			},
+			{
+				"name": "total_cases",
+				"type": "String"
+			},
+			{
+				"name": "new_cases",
+				"type": "String"
+			},
+			{
+				"name": "new_cases_smoothed",
+				"type": "String"
+			},
+			{
+				"name": "total_deaths",
+				"type": "String"
+			},
+			{
+				"name": "new_deaths",
+				"type": "String"
+			},
+			{
+				"name": "new_deaths_smoothed",
+				"type": "String"
+			},
+			{
+				"name": "total_cases_per_million",
+				"type": "String"
+			},
+			{
+				"name": "new_cases_per_million",
+				"type": "String"
+			},
+			{
+				"name": "new_cases_smoothed_per_million",
+				"type": "String"
+			},
+			{
+				"name": "total_deaths_per_million",
+				"type": "String"
+			},
+			{
+				"name": "new_deaths_per_million",
+				"type": "String"
+			},
+			{
+				"name": "new_deaths_smoothed_per_million",
+				"type": "String"
+			},
+			{
+				"name": "reproduction_rate",
+				"type": "String"
+			},
+			{
+				"name": "icu_patients",
+				"type": "String"
+			},
+			{
+				"name": "icu_patients_per_million",
+				"type": "String"
+			},
+			{
+				"name": "hosp_patients",
+				"type": "String"
+			},
+			{
+				"name": "hosp_patients_per_million",
+				"type": "String"
+			},
+			{
+				"name": "weekly_icu_admissions",
+				"type": "String"
+			},
+			{
+				"name": "weekly_icu_admissions_per_million",
+				"type": "String"
+			},
+			{
+				"name": "weekly_hosp_admissions",
+				"type": "String"
+			},
+			{
+				"name": "weekly_hosp_admissions_per_million",
+				"type": "String"
+			},
+			{
+				"name": "total_tests",
+				"type": "String"
+			},
+			{
+				"name": "new_tests",
+				"type": "String"
+			},
+			{
+				"name": "total_tests_per_thousand",
+				"type": "String"
+			},
+			{
+				"name": "new_tests_per_thousand",
+				"type": "String"
+			},
+			{
+				"name": "new_tests_smoothed",
+				"type": "String"
+			},
+			{
+				"name": "new_tests_smoothed_per_thousand",
+				"type": "String"
+			},
+			{
+				"name": "positive_rate",
+				"type": "String"
+			},
+			{
+				"name": "tests_per_case",
+				"type": "String"
+			},
+			{
+				"name": "tests_units",
+				"type": "String"
+			},
+			{
+				"name": "total_vaccinations",
+				"type": "String"
+			},
+			{
+				"name": "people_vaccinated",
+				"type": "String"
+			},
+			{
+				"name": "people_fully_vaccinated",
+				"type": "String"
+			},
+			{
+				"name": "total_boosters",
+				"type": "String"
+			},
+			{
+				"name": "new_vaccinations",
+				"type": "String"
+			},
+			{
+				"name": "new_vaccinations_smoothed",
+				"type": "String"
+			},
+			{
+				"name": "total_vaccinations_per_hundred",
+				"type": "String"
+			},
+			{
+				"name": "people_vaccinated_per_hundred",
+				"type": "String"
+			},
+			{
+				"name": "people_fully_vaccinated_per_hundred",
+				"type": "String"
+			},
+			{
+				"name": "total_boosters_per_hundred",
+				"type": "String"
+			},
+			{
+				"name": "new_vaccinations_smoothed_per_million",
+				"type": "String"
+			},
+			{
+				"name": "new_people_vaccinated_smoothed",
+				"type": "String"
+			},
+			{
+				"name": "new_people_vaccinated_smoothed_per_hundred",
+				"type": "String"
+			},
+			{
+				"name": "stringency_index",
+				"type": "String"
+			},
+			{
+				"name": "population_density",
+				"type": "String"
+			},
+			{
+				"name": "median_age",
+				"type": "String"
+			},
+			{
+				"name": "aged_65_older",
+				"type": "String"
+			},
+			{
+				"name": "aged_70_older",
+				"type": "String"
+			},
+			{
+				"name": "gdp_per_capita",
+				"type": "String"
+			},
+			{
+				"name": "extreme_poverty",
+				"type": "String"
+			},
+			{
+				"name": "cardiovasc_death_rate",
+				"type": "String"
+			},
+			{
+				"name": "diabetes_prevalence",
+				"type": "String"
+			},
+			{
+				"name": "female_smokers",
+				"type": "String"
+			},
+			{
+				"name": "male_smokers",
+				"type": "String"
+			},
+			{
+				"name": "handwashing_facilities",
+				"type": "String"
+			},
+			{
+				"name": "hospital_beds_per_thousand",
+				"type": "String"
+			},
+			{
+				"name": "life_expectancy",
+				"type": "String"
+			},
+			{
+				"name": "human_development_index",
+				"type": "String"
+			},
+			{
+				"name": "population",
+				"type": "String"
+			},
+			{
+				"name": "excess_mortality_cumulative_absolute",
+				"type": "String"
+			},
+			{
+				"name": "excess_mortality_cumulative",
+				"type": "String"
+			},
+			{
+				"name": "excess_mortality",
+				"type": "String"
+			},
+			{
+				"name": "excess_mortality_cumulative_per_million",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

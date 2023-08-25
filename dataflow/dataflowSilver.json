@@ -1,0 +1,142 @@
+{
+	"name": "dataflowSilver",
+	"properties": {
+		"description": "Agregación de datos por año y mes",
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Ds_Parquet_SIilver",
+						"type": "DatasetReference"
+					},
+					"name": "LecturaPaquetSIlver"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Ds_Parquet_SIilver",
+						"type": "DatasetReference"
+					},
+					"name": "FlTotalcasosCovid",
+					"rejectedDataLinkedService": {
+						"referenceName": "LinnkDataLakeStorangel",
+						"type": "LinkedServiceReference"
+					}
+				},
+				{
+					"dataset": {
+						"referenceName": "Ds_Parquet_SIilver",
+						"type": "DatasetReference"
+					},
+					"name": "FiTotalesCasosAntecedente",
+					"rejectedDataLinkedService": {
+						"referenceName": "LinnkDataLakeStorangel",
+						"type": "LinkedServiceReference"
+					}
+				}
+			],
+			"transformations": [
+				{
+					"name": "AgregacionAnioLocacion"
+				},
+				{
+					"name": "AgregacionAntecedentes",
+					"description": "Agregar columnas de agregado personas con antecedentes"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          continent as string,",
+				"          location as string,",
+				"          date as timestamp,",
+				"          total_cases as double,",
+				"          new_cases as double,",
+				"          new_cases_smoothed as double,",
+				"          total_deaths as double,",
+				"          new_deaths as double,",
+				"          total_cases_per_million as double,",
+				"          new_cases_per_million as double,",
+				"          total_deaths_per_million as double,",
+				"          new_deaths_per_million as double,",
+				"          new_people_vaccinated_smoothed_per_hundred as double,",
+				"          stringency_index as double,",
+				"          population_density as double,",
+				"          median_age as double,",
+				"          aged_65_older as double,",
+				"          aged_70_older as double,",
+				"          gdp_per_capita as double,",
+				"          extreme_poverty as double,",
+				"          cardiovasc_death_rate as double,",
+				"          diabetes_prevalence as double,",
+				"          female_smokers as double,",
+				"          male_smokers as double,",
+				"          handwashing_facilities as double,",
+				"          hospital_beds_per_thousand as double,",
+				"          life_expectancy as double,",
+				"          human_development_index as double,",
+				"          population as double,",
+				"          excess_mortality_cumulative_absolute as double,",
+				"          excess_mortality_cumulative as double,",
+				"          excess_mortality as double,",
+				"          excess_mortality_cumulative_per_million as double,",
+				"          Anio as integer,",
+				"          Mes as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet',",
+				"     partitionBy('hash', 1)) ~> LecturaPaquetSIlver",
+				"LecturaPaquetSIlver aggregate(groupBy(Mes,",
+				"          Anio,",
+				"          continent,",
+				"          location),",
+				"     total_cases = sum(total_cases),",
+				"          new_cases = sum(new_cases),",
+				"          total_deaths = sum(total_deaths),",
+				"          new_deaths = sum(new_deaths),",
+				"          total_cases_per_million = sum(total_cases_per_million),",
+				"          new_cases_per_million = sum(new_cases_per_million),",
+				"          total_deaths_per_million = sum(total_deaths_per_million),",
+				"          new_deaths_per_million = sum(new_deaths_per_million),",
+				"          new_people_vaccinated_smoothed_per_hundred = sum(new_people_vaccinated_smoothed_per_hundred),",
+				"          population_density = sum(population_density),",
+				"     partitionBy('hash', 1)) ~> AgregacionAnioLocacion",
+				"LecturaPaquetSIlver aggregate(groupBy(Anio,",
+				"          Mes,",
+				"          continent,",
+				"          location),",
+				"     population_density = sum(population_density),",
+				"          median_age = sum(median_age),",
+				"          cardiovasc_death_rate = sum(cardiovasc_death_rate),",
+				"          diabetes_prevalence = sum(diabetes_prevalence),",
+				"          female_smokers = sum(female_smokers),",
+				"          male_smokers = sum(male_smokers),",
+				"          handwashing_facilities = sum(handwashing_facilities),",
+				"          hospital_beds_per_thousand = sum(hospital_beds_per_thousand),",
+				"          population = sum(population),",
+				"          excess_mortality_cumulative_absolute = sum(excess_mortality_cumulative_absolute),",
+				"          excess_mortality_cumulative = sum(excess_mortality_cumulative),",
+				"          excess_mortality = sum(excess_mortality),",
+				"          excess_mortality_cumulative_per_million = sum(excess_mortality_cumulative_per_million),",
+				"     partitionBy('hash', 1)) ~> AgregacionAntecedentes",
+				"AgregacionAnioLocacion sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     partitionFileNames:['Total_caso_covid'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FlTotalcasosCovid",
+				"AgregacionAntecedentes sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     partitionFileNames:['Total_caso_covid_antecedente'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FiTotalesCasosAntecedente"
+			]
+		}
+	}
+}

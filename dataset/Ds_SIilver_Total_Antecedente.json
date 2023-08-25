@@ -1,0 +1,91 @@
+{
+	"name": "Ds_SIilver_Total_Antecedente",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "Total_caso_covid_antecedente",
+				"folderPath": "Silver/covid",
+				"container": "data"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "Anio",
+				"type": "INT32"
+			},
+			{
+				"name": "Mes",
+				"type": "INT32"
+			},
+			{
+				"name": "continent",
+				"type": "UTF8"
+			},
+			{
+				"name": "location",
+				"type": "UTF8"
+			},
+			{
+				"name": "population_density",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "median_age",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "cardiovasc_death_rate",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "diabetes_prevalence",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "female_smokers",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "male_smokers",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "handwashing_facilities",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "hospital_beds_per_thousand",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "population",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "excess_mortality_cumulative_absolute",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "excess_mortality_cumulative",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "excess_mortality",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "excess_mortality_cumulative_per_million",
+				"type": "DOUBLE"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

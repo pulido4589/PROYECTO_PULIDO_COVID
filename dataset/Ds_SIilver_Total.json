@@ -1,0 +1,79 @@
+{
+	"name": "Ds_SIilver_Total",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "Total_caso_covid",
+				"folderPath": "Silver/covid",
+				"container": "data"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "Mes",
+				"type": "INT32"
+			},
+			{
+				"name": "Anio",
+				"type": "INT32"
+			},
+			{
+				"name": "continent",
+				"type": "UTF8"
+			},
+			{
+				"name": "location",
+				"type": "UTF8"
+			},
+			{
+				"name": "total_cases",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "new_cases",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "total_deaths",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "new_deaths",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "total_cases_per_million",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "new_cases_per_million",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "total_deaths_per_million",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "new_deaths_per_million",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "new_people_vaccinated_smoothed_per_hundred",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "population_density",
+				"type": "DOUBLE"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

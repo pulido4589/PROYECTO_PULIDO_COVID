@@ -1,0 +1,9 @@
+{
+	"name": "wf-df-protecto-angel",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "822c0dc4-fa2e-44f2-a9f4-76343dd33510",
+		"tenantId": "0cf11b83-d338-43a4-ba90-34cfa9985885"
+	}
+}

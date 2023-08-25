@@ -1,0 +1,32 @@
+{
+	"name": "SinkDataset",
+	"properties": {
+		"description": "Connection to your Azure Data Lake Store",
+		"linkedServiceName": {
+			"referenceName": "LinnkDataLakeStorangel",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"Container": {
+				"type": "string",
+				"defaultValue": "data"
+			},
+			"Directory": {
+				"type": "string",
+				"defaultValue": "csv"
+			}
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "bronce/covid/csv",
+				"fileSystem": "data"
+			},
+			"encodingName": "UTF-8"
+		},
+		"schema": {}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
