@@ -15,9 +15,17 @@
 			"type": "secureString",
 			"metadata": "Cadena protegida para \"connectionString\"de \"LinkAzureSqlDatabase\""
 		},
+		"LinkDatabricks_accessToken": {
+			"type": "secureString",
+			"metadata": "Cadena protegida para \"accessToken\"de \"LinkDatabricks\""
+		},
 		"LinnkDataLakeStorangel_accountKey": {
 			"type": "secureString",
 			"metadata": "Cadena protegida para \"accountKey\"de \"LinnkDataLakeStorangel\""
+		},
+		"LinkDatabricks_properties_typeProperties_existingClusterId": {
+			"type": "string",
+			"defaultValue": "0825-204808-risdgc0e"
 		},
 		"LinkHttpServer_properties_typeProperties_url": {
 			"type": "string",
@@ -1812,6 +1820,12 @@
 								"dependencyConditions": [
 									"Succeeded"
 								]
+							},
+							{
+								"activity": "Trasformacion para Gold",
+								"dependencyConditions": [
+									"Succeeded"
+								]
 							}
 						],
 						"policy": {
@@ -2055,6 +2069,33 @@
 								}
 							}
 						]
+					},
+					{
+						"name": "Trasformacion para Gold",
+						"type": "DatabricksNotebook",
+						"dependsOn": [
+							{
+								"activity": "Flufo Dato Silver Agregacion",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Users/angel.pulido@sophossolutions.com/Transformación de Datos con Azure Databricks"
+						},
+						"linkedServiceName": {
+							"referenceName": "LinkDatabricks",
+							"type": "LinkedServiceReference"
+						}
 					}
 				],
 				"policy": {
@@ -2084,6 +2125,7 @@
 				"[concat(variables('factoryId'), '/datasets/Ds_SIilver_Total_Antecedente')]",
 				"[concat(variables('factoryId'), '/datasets/Ds_AzureSqlTable')]",
 				"[concat(variables('factoryId'), '/datasets/Ds_SIilver_Total')]",
+				"[concat(variables('factoryId'), '/linkedServices/LinkDatabricks')]",
 				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
 			]
 		},
@@ -3279,6 +3321,24 @@
 				"type": "AzureSqlDatabase",
 				"typeProperties": {
 					"connectionString": "[parameters('LinkAzureSqlDatabase_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LinkDatabricks')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureDatabricks",
+				"typeProperties": {
+					"domain": "https://adb-4373998185721740.0.azuredatabricks.net",
+					"accessToken": {
+						"type": "SecureString",
+						"value": "[parameters('LinkDatabricks_accessToken')]"
+					},
+					"existingClusterId": "[parameters('LinkDatabricks_properties_typeProperties_existingClusterId')]"
 				}
 			},
 			"dependsOn": []

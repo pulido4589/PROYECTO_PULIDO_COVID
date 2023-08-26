@@ -15,9 +15,17 @@
 			"type": "secureString",
 			"metadata": "Cadena protegida para \"connectionString\"de \"LinkAzureSqlDatabase\""
 		},
+		"LinkDatabricks_accessToken": {
+			"type": "secureString",
+			"metadata": "Cadena protegida para \"accessToken\"de \"LinkDatabricks\""
+		},
 		"LinnkDataLakeStorangel_accountKey": {
 			"type": "secureString",
 			"metadata": "Cadena protegida para \"accountKey\"de \"LinnkDataLakeStorangel\""
+		},
+		"LinkDatabricks_properties_typeProperties_existingClusterId": {
+			"type": "string",
+			"defaultValue": "0825-204808-risdgc0e"
 		},
 		"LinkHttpServer_properties_typeProperties_url": {
 			"type": "string",
@@ -60,8 +68,14 @@
 					"LinkAzureSqlDatabase_connectionString": {
 						"value": "[parameters('LinkAzureSqlDatabase_connectionString')]"
 					},
+					"LinkDatabricks_accessToken": {
+						"value": "[parameters('LinkDatabricks_accessToken')]"
+					},
 					"LinnkDataLakeStorangel_accountKey": {
 						"value": "[parameters('LinnkDataLakeStorangel_accountKey')]"
+					},
+					"LinkDatabricks_properties_typeProperties_existingClusterId": {
+						"value": "[parameters('LinkDatabricks_properties_typeProperties_existingClusterId')]"
 					},
 					"LinkHttpServer_properties_typeProperties_url": {
 						"value": "[parameters('LinkHttpServer_properties_typeProperties_url')]"

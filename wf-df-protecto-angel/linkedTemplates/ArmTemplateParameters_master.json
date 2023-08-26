@@ -11,8 +11,14 @@
 		"LinkAzureSqlDatabase_connectionString": {
 			"value": ""
 		},
+		"LinkDatabricks_accessToken": {
+			"value": ""
+		},
 		"LinnkDataLakeStorangel_accountKey": {
 			"value": ""
+		},
+		"LinkDatabricks_properties_typeProperties_existingClusterId": {
+			"value": "0825-204808-risdgc0e"
 		},
 		"LinkHttpServer_properties_typeProperties_url": {
 			"value": "https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/owid-covid-data.csv"
