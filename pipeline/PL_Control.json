@@ -1,0 +1,21 @@
+{
+	"name": "PL_Control",
+	"properties": {
+		"activities": [
+			{
+				"name": "PL_Copia_archivo_url",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PL_Copia_archivo_url",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"annotations": []
+	}
+}
