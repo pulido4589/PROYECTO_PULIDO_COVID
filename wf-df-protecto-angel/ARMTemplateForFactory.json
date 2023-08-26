@@ -1,0 +1,3664 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Nombre de instancia de Data Factory",
+			"defaultValue": "wf-df-protecto-angel"
+		},
+		"AzureBlobStorage1_connectionString": {
+			"type": "secureString",
+			"metadata": "Cadena protegida para \"connectionString\"de \"AzureBlobStorage1\""
+		},
+		"LinkAzureSqlDatabase_connectionString": {
+			"type": "secureString",
+			"metadata": "Cadena protegida para \"connectionString\"de \"LinkAzureSqlDatabase\""
+		},
+		"LinnkDataLakeStorangel_accountKey": {
+			"type": "secureString",
+			"metadata": "Cadena protegida para \"accountKey\"de \"LinnkDataLakeStorangel\""
+		},
+		"LinkHttpServer_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/owid-covid-data.csv"
+		},
+		"LinnkDataLakeStorangel_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://adlstproyectoangel.dfs.core.windows.net/"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/PL_Control')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "PL_Copia_archivo_url",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "PL_Copia_archivo_url",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/PL_Copia_archivo_url')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PL_Copia_archivo_url')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy Data Bronce",
+						"description": "copia archivo para análisis desde una url",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 1,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Destination",
+								"value": "data/bronce/covid/csv/owid-covid-data.csv"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "HttpReadSettings",
+									"requestMethod": "GET"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".csv"
+								}
+							},
+							"enableStaging": false,
+							"parallelCopies": 1,
+							"enableSkipIncompatibleRow": true,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "continent",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "continent",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "location",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "location",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "date",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "date",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "total_cases",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "total_cases",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "new_cases",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "new_cases",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "new_cases_smoothed",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "new_cases_smoothed",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "total_deaths",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "total_deaths",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "new_deaths",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "new_deaths",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "new_deaths_smoothed",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "new_deaths_smoothed",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "total_cases_per_million",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "total_cases_per_million",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "new_cases_per_million",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "new_cases_per_million",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "new_cases_smoothed_per_million",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "new_cases_smoothed_per_million",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "total_deaths_per_million",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "total_deaths_per_million",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "new_deaths_per_million",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "new_deaths_per_million",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "new_deaths_smoothed_per_million",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "new_deaths_smoothed_per_million",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "reproduction_rate",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "reproduction_rate",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "icu_patients",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "icu_patients",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "icu_patients_per_million",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "icu_patients_per_million",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "hosp_patients",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "hosp_patients",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "hosp_patients_per_million",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "hosp_patients_per_million",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "weekly_icu_admissions",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "weekly_icu_admissions",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "weekly_icu_admissions_per_million",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "weekly_icu_admissions_per_million",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "weekly_hosp_admissions",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "weekly_hosp_admissions",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "weekly_hosp_admissions_per_million",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "weekly_hosp_admissions_per_million",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "total_tests",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "total_tests",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "new_tests",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "new_tests",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "total_tests_per_thousand",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "total_tests_per_thousand",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "new_tests_per_thousand",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "new_tests_per_thousand",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "new_tests_smoothed",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "new_tests_smoothed",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "new_tests_smoothed_per_thousand",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "new_tests_smoothed_per_thousand",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "positive_rate",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "positive_rate",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "tests_per_case",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "tests_per_case",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "tests_units",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "tests_units",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "total_vaccinations",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "total_vaccinations",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "people_vaccinated",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "people_vaccinated",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "people_fully_vaccinated",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "people_fully_vaccinated",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "total_boosters",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "total_boosters",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "new_vaccinations",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "new_vaccinations",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "new_vaccinations_smoothed",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "new_vaccinations_smoothed",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "total_vaccinations_per_hundred",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "total_vaccinations_per_hundred",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "people_vaccinated_per_hundred",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "people_vaccinated_per_hundred",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "people_fully_vaccinated_per_hundred",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "people_fully_vaccinated_per_hundred",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "total_boosters_per_hundred",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "total_boosters_per_hundred",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "new_vaccinations_smoothed_per_million",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "new_vaccinations_smoothed_per_million",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "new_people_vaccinated_smoothed",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "new_people_vaccinated_smoothed",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "new_people_vaccinated_smoothed_per_hundred",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "new_people_vaccinated_smoothed_per_hundred",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "stringency_index",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "stringency_index",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "population_density",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "population_density",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "median_age",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "median_age",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "aged_65_older",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "aged_65_older",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "aged_70_older",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "aged_70_older",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "gdp_per_capita",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "gdp_per_capita",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "extreme_poverty",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "extreme_poverty",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "cardiovasc_death_rate",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "cardiovasc_death_rate",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "diabetes_prevalence",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "diabetes_prevalence",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "female_smokers",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "female_smokers",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "male_smokers",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "male_smokers",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "handwashing_facilities",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "handwashing_facilities",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "hospital_beds_per_thousand",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "hospital_beds_per_thousand",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "life_expectancy",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "life_expectancy",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "human_development_index",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "human_development_index",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "population",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "population",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "excess_mortality_cumulative_absolute",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "excess_mortality_cumulative_absolute",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "excess_mortality_cumulative",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "excess_mortality_cumulative",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "excess_mortality",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "excess_mortality",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "excess_mortality_cumulative_per_million",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "excess_mortality_cumulative_per_million",
+											"type": "String",
+											"physicalType": "String"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Ds_url_file",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Ds_url_csv",
+								"type": "DatasetReference",
+								"parameters": {
+									"nulo": "0"
+								}
+							}
+						]
+					},
+					{
+						"name": "Data_flow_Silver",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "Copy Data Bronce",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "dataflow",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"LecturaCovid": {
+										"nulo": "0"
+									},
+									"SalidaparaSilver": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 16,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					},
+					{
+						"name": "Copy data Parquet Silver",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Data_flow_Silver",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "data/Silver/covid/"
+							},
+							{
+								"name": "Destination",
+								"value": "data/Silver/covid/"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "ParquetSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings"
+								},
+								"formatSettings": {
+									"type": "ParquetWriteSettings"
+								}
+							},
+							"enableStaging": false,
+							"enableSkipIncompatibleRow": true,
+							"validateDataConsistency": true,
+							"logSettings": {
+								"enableCopyActivityLog": true,
+								"copyActivityLogSettings": {
+									"logLevel": "Warning",
+									"enableReliableLogging": false
+								},
+								"logLocationSettings": {
+									"linkedServiceName": {
+										"referenceName": "AzureBlobStorage1",
+										"type": "LinkedServiceReference"
+									},
+									"path": "data/Silver/covid"
+								}
+							},
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "continent",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "continent",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "location",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "location",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "date",
+											"type": "DateTime",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "date",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "total_cases",
+											"type": "Double",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "total_cases",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "new_cases",
+											"type": "Double",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "new_cases",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "new_cases_smoothed",
+											"type": "Double",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "new_cases_smoothed",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "total_deaths",
+											"type": "Double",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "total_deaths",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "new_deaths",
+											"type": "Double",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "new_deaths",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "total_cases_per_million",
+											"type": "Double",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "total_cases_per_million",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "new_cases_per_million",
+											"type": "Double",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "new_cases_per_million",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "total_deaths_per_million",
+											"type": "Double",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "total_deaths_per_million",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "new_deaths_per_million",
+											"type": "Double",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "new_deaths_per_million",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "new_people_vaccinated_smoothed_per_hundred",
+											"type": "Double",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "new_people_vaccinated_smoothed_per_hundred",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "stringency_index",
+											"type": "Double",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "stringency_index",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "population_density",
+											"type": "Double",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "population_density",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "median_age",
+											"type": "Double",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "median_age",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "aged_65_older",
+											"type": "Double",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "aged_65_older",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "aged_70_older",
+											"type": "Double",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "aged_70_older",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "gdp_per_capita",
+											"type": "Double",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "gdp_per_capita",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "extreme_poverty",
+											"type": "Double",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "extreme_poverty",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "cardiovasc_death_rate",
+											"type": "Double",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "cardiovasc_death_rate",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "diabetes_prevalence",
+											"type": "Double",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "diabetes_prevalence",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "female_smokers",
+											"type": "Double",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "female_smokers",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "male_smokers",
+											"type": "Double",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "male_smokers",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "handwashing_facilities",
+											"type": "Double",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "handwashing_facilities",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "hospital_beds_per_thousand",
+											"type": "Double",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "hospital_beds_per_thousand",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "life_expectancy",
+											"type": "Double",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "life_expectancy",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "human_development_index",
+											"type": "Double",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "human_development_index",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "population",
+											"type": "Double",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "population",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "excess_mortality_cumulative_absolute",
+											"type": "Double",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "excess_mortality_cumulative_absolute",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "excess_mortality_cumulative",
+											"type": "Double",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "excess_mortality_cumulative",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "excess_mortality",
+											"type": "Double",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "excess_mortality",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "excess_mortality_cumulative_per_million",
+											"type": "Double",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "excess_mortality_cumulative_per_million",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Anio",
+											"type": "Int32",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Anio",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Mes",
+											"type": "Int32",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Mes",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Ds_silver_csv",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Ds_Parquet_SIilver",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Flufo Dato Silver Agregacion",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "Copy data Parquet Silver",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "dataflowSilver",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"LecturaPaquetSIlver": {},
+									"FlTotalcasosCovid": {},
+									"FiTotalesCasosAntecedente": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					},
+					{
+						"name": "Copy data Gold Totales Antecedentes",
+						"description": "Caos totales covid Antecedentes",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Copy data Gold Totales",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "data/Silver/covid/Total_caso_covid_antecedente"
+							},
+							{
+								"name": "Destination",
+								"value": "dbo.@{'Total_Casos_Antecedentes'}"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "ParquetReadSettings"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false,
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "Anio",
+											"type": "Int32",
+											"physicalType": "INT32"
+										},
+										"sink": {
+											"name": "Anio",
+											"type": "Int32",
+											"physicalType": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "Mes",
+											"type": "Int32",
+											"physicalType": "INT32"
+										},
+										"sink": {
+											"name": "Mes",
+											"type": "Int32",
+											"physicalType": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "continent",
+											"type": "String",
+											"physicalType": "UTF8"
+										},
+										"sink": {
+											"name": "continent",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "location",
+											"type": "String",
+											"physicalType": "UTF8"
+										},
+										"sink": {
+											"name": "location",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "population_density",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										},
+										"sink": {
+											"name": "population_density",
+											"type": "Double",
+											"physicalType": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "median_age",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										},
+										"sink": {
+											"name": "median_age",
+											"type": "Double",
+											"physicalType": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "cardiovasc_death_rate",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										},
+										"sink": {
+											"name": "cardiovasc_death_rate",
+											"type": "Double",
+											"physicalType": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "diabetes_prevalence",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										},
+										"sink": {
+											"name": "diabetes_prevalence",
+											"type": "Double",
+											"physicalType": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "female_smokers",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										},
+										"sink": {
+											"name": "female_smokers",
+											"type": "Double",
+											"physicalType": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "male_smokers",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										},
+										"sink": {
+											"name": "male_smokers",
+											"type": "Double",
+											"physicalType": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "handwashing_facilities",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										},
+										"sink": {
+											"name": "handwashing_facilities",
+											"type": "Double",
+											"physicalType": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "hospital_beds_per_thousand",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										},
+										"sink": {
+											"name": "hospital_beds_per_thousand",
+											"type": "Double",
+											"physicalType": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "population",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										},
+										"sink": {
+											"name": "population",
+											"type": "Double",
+											"physicalType": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "excess_mortality_cumulative_absolute",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										},
+										"sink": {
+											"name": "excess_mortality_cumulative_absolute",
+											"type": "Double",
+											"physicalType": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "excess_mortality_cumulative",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										},
+										"sink": {
+											"name": "excess_mortality_cumulative",
+											"type": "Double",
+											"physicalType": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "excess_mortality",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										},
+										"sink": {
+											"name": "excess_mortality",
+											"type": "Double",
+											"physicalType": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "excess_mortality_cumulative_per_million",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										},
+										"sink": {
+											"name": "excess_mortality_cumulative_per_million",
+											"type": "Double",
+											"physicalType": "Double"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Ds_SIilver_Total_Antecedente",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Ds_AzureSqlTable",
+								"type": "DatasetReference",
+								"parameters": {
+									"Tabla": "Total_Casos_Antecedentes"
+								}
+							}
+						]
+					},
+					{
+						"name": "Copy data Gold Totales",
+						"description": "Totales covid",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Flufo Dato Silver Agregacion",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "data/Silver/covid/Total_caso_covid"
+							},
+							{
+								"name": "Destination",
+								"value": "dbo.@{'Total_caso_covid'}"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "ParquetReadSettings"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "upsert",
+								"upsertSettings": {
+									"useTempDB": true,
+									"keys": [
+										"Mes",
+										"Anio",
+										"continent",
+										"location"
+									]
+								},
+								"sqlWriterUseTableLock": false,
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "Mes",
+											"type": "Int32",
+											"physicalType": "INT32"
+										},
+										"sink": {
+											"name": "Mes",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									},
+									{
+										"source": {
+											"name": "Anio",
+											"type": "Int32",
+											"physicalType": "INT32"
+										},
+										"sink": {
+											"name": "Anio",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									},
+									{
+										"source": {
+											"name": "continent",
+											"type": "String",
+											"physicalType": "UTF8"
+										},
+										"sink": {
+											"name": "continent",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "location",
+											"type": "String",
+											"physicalType": "UTF8"
+										},
+										"sink": {
+											"name": "location",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "total_cases",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										},
+										"sink": {
+											"name": "total_cases",
+											"type": "Double",
+											"physicalType": "float"
+										}
+									},
+									{
+										"source": {
+											"name": "new_cases",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										},
+										"sink": {
+											"name": "new_cases",
+											"type": "Double",
+											"physicalType": "float"
+										}
+									},
+									{
+										"source": {
+											"name": "total_deaths",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										},
+										"sink": {
+											"name": "total_deaths",
+											"type": "Double",
+											"physicalType": "float"
+										}
+									},
+									{
+										"source": {
+											"name": "new_deaths",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										},
+										"sink": {
+											"name": "new_deaths",
+											"type": "Double",
+											"physicalType": "float"
+										}
+									},
+									{
+										"source": {
+											"name": "total_cases_per_million",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										},
+										"sink": {
+											"name": "total_cases_per_million",
+											"type": "Double",
+											"physicalType": "float"
+										}
+									},
+									{
+										"source": {
+											"name": "new_cases_per_million",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										},
+										"sink": {
+											"name": "new_cases_per_million",
+											"type": "Double",
+											"physicalType": "float"
+										}
+									},
+									{
+										"source": {
+											"name": "total_deaths_per_million",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										},
+										"sink": {
+											"name": "total_deaths_per_million",
+											"type": "Double",
+											"physicalType": "float"
+										}
+									},
+									{
+										"source": {
+											"name": "new_deaths_per_million",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										},
+										"sink": {
+											"name": "new_deaths_per_million",
+											"type": "Double",
+											"physicalType": "float"
+										}
+									},
+									{
+										"source": {
+											"name": "new_people_vaccinated_smoothed_per_hundred",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										},
+										"sink": {
+											"name": "new_people_vaccinated_smoothed_per_hundred",
+											"type": "Double",
+											"physicalType": "float"
+										}
+									},
+									{
+										"source": {
+											"name": "population_density",
+											"type": "Double",
+											"physicalType": "DOUBLE"
+										},
+										"sink": {
+											"name": "population_density",
+											"type": "Double",
+											"physicalType": "float"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Ds_SIilver_Total",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Ds_AzureSqlTable",
+								"type": "DatasetReference",
+								"parameters": {
+									"Tabla": "Total_caso_covid"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"SinkContainer": {
+						"type": "string",
+						"defaultValue": "data"
+					},
+					"SinkDirectory": {
+						"type": "string",
+						"defaultValue": "csv"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-08-25T16:33:06Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Ds_url_file')]",
+				"[concat(variables('factoryId'), '/datasets/Ds_url_csv')]",
+				"[concat(variables('factoryId'), '/dataflows/dataflow')]",
+				"[concat(variables('factoryId'), '/datasets/Ds_silver_csv')]",
+				"[concat(variables('factoryId'), '/datasets/Ds_Parquet_SIilver')]",
+				"[concat(variables('factoryId'), '/dataflows/dataflowSilver')]",
+				"[concat(variables('factoryId'), '/datasets/Ds_SIilver_Total_Antecedente')]",
+				"[concat(variables('factoryId'), '/datasets/Ds_AzureSqlTable')]",
+				"[concat(variables('factoryId'), '/datasets/Ds_SIilver_Total')]",
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Ds_AzureSqlTable')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LinkAzureSqlDatabase",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Tabla": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": {
+						"value": "@dataset().Tabla",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LinkAzureSqlDatabase')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Ds_Parquet_SIilver')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "covid_global.parquet",
+						"folderPath": "Silver/covid",
+						"container": "data"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Ds_SIilver_Total')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "Total_caso_covid",
+						"folderPath": "Silver/covid",
+						"container": "data"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "Mes",
+						"type": "INT32"
+					},
+					{
+						"name": "Anio",
+						"type": "INT32"
+					},
+					{
+						"name": "continent",
+						"type": "UTF8"
+					},
+					{
+						"name": "location",
+						"type": "UTF8"
+					},
+					{
+						"name": "total_cases",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "new_cases",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "total_deaths",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "new_deaths",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "total_cases_per_million",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "new_cases_per_million",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "total_deaths_per_million",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "new_deaths_per_million",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "new_people_vaccinated_smoothed_per_hundred",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "population_density",
+						"type": "DOUBLE"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Ds_SIilver_Total_Antecedente')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "Total_caso_covid_antecedente",
+						"folderPath": "Silver/covid",
+						"container": "data"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "Anio",
+						"type": "INT32"
+					},
+					{
+						"name": "Mes",
+						"type": "INT32"
+					},
+					{
+						"name": "continent",
+						"type": "UTF8"
+					},
+					{
+						"name": "location",
+						"type": "UTF8"
+					},
+					{
+						"name": "population_density",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "median_age",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "cardiovasc_death_rate",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "diabetes_prevalence",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "female_smokers",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "male_smokers",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "handwashing_facilities",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "hospital_beds_per_thousand",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "population",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "excess_mortality_cumulative_absolute",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "excess_mortality_cumulative",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "excess_mortality",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "excess_mortality_cumulative_per_million",
+						"type": "DOUBLE"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Ds_silver_csv')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "covid_global.csv",
+						"folderPath": "Silver/covid",
+						"container": "data"
+					},
+					"columnDelimiter": ",",
+					"rowDelimiter": "\n",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"nullValue": "0.0",
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "continent",
+						"type": "String"
+					},
+					{
+						"name": "location",
+						"type": "String"
+					},
+					{
+						"name": "date",
+						"type": "String"
+					},
+					{
+						"name": "total_cases",
+						"type": "String"
+					},
+					{
+						"name": "new_cases",
+						"type": "String"
+					},
+					{
+						"name": "new_cases_smoothed",
+						"type": "String"
+					},
+					{
+						"name": "total_deaths",
+						"type": "String"
+					},
+					{
+						"name": "new_deaths",
+						"type": "String"
+					},
+					{
+						"name": "new_deaths_smoothed",
+						"type": "String"
+					},
+					{
+						"name": "total_cases_per_million",
+						"type": "String"
+					},
+					{
+						"name": "new_cases_per_million",
+						"type": "String"
+					},
+					{
+						"name": "new_cases_smoothed_per_million",
+						"type": "String"
+					},
+					{
+						"name": "total_deaths_per_million",
+						"type": "String"
+					},
+					{
+						"name": "new_deaths_per_million",
+						"type": "String"
+					},
+					{
+						"name": "new_deaths_smoothed_per_million",
+						"type": "String"
+					},
+					{
+						"name": "reproduction_rate",
+						"type": "String"
+					},
+					{
+						"name": "icu_patients",
+						"type": "String"
+					},
+					{
+						"name": "icu_patients_per_million",
+						"type": "String"
+					},
+					{
+						"name": "hosp_patients",
+						"type": "String"
+					},
+					{
+						"name": "hosp_patients_per_million",
+						"type": "String"
+					},
+					{
+						"name": "weekly_icu_admissions",
+						"type": "String"
+					},
+					{
+						"name": "weekly_icu_admissions_per_million",
+						"type": "String"
+					},
+					{
+						"name": "weekly_hosp_admissions",
+						"type": "String"
+					},
+					{
+						"name": "weekly_hosp_admissions_per_million",
+						"type": "String"
+					},
+					{
+						"name": "total_tests",
+						"type": "String"
+					},
+					{
+						"name": "new_tests",
+						"type": "String"
+					},
+					{
+						"name": "total_tests_per_thousand",
+						"type": "String"
+					},
+					{
+						"name": "new_tests_per_thousand",
+						"type": "String"
+					},
+					{
+						"name": "new_tests_smoothed",
+						"type": "String"
+					},
+					{
+						"name": "new_tests_smoothed_per_thousand",
+						"type": "String"
+					},
+					{
+						"name": "positive_rate",
+						"type": "String"
+					},
+					{
+						"name": "tests_per_case",
+						"type": "String"
+					},
+					{
+						"name": "tests_units",
+						"type": "String"
+					},
+					{
+						"name": "total_vaccinations",
+						"type": "String"
+					},
+					{
+						"name": "people_vaccinated",
+						"type": "String"
+					},
+					{
+						"name": "people_fully_vaccinated",
+						"type": "String"
+					},
+					{
+						"name": "total_boosters",
+						"type": "String"
+					},
+					{
+						"name": "new_vaccinations",
+						"type": "String"
+					},
+					{
+						"name": "new_vaccinations_smoothed",
+						"type": "String"
+					},
+					{
+						"name": "total_vaccinations_per_hundred",
+						"type": "String"
+					},
+					{
+						"name": "people_vaccinated_per_hundred",
+						"type": "String"
+					},
+					{
+						"name": "people_fully_vaccinated_per_hundred",
+						"type": "String"
+					},
+					{
+						"name": "total_boosters_per_hundred",
+						"type": "String"
+					},
+					{
+						"name": "new_vaccinations_smoothed_per_million",
+						"type": "String"
+					},
+					{
+						"name": "new_people_vaccinated_smoothed",
+						"type": "String"
+					},
+					{
+						"name": "new_people_vaccinated_smoothed_per_hundred",
+						"type": "String"
+					},
+					{
+						"name": "stringency_index",
+						"type": "String"
+					},
+					{
+						"name": "population_density",
+						"type": "String"
+					},
+					{
+						"name": "median_age",
+						"type": "String"
+					},
+					{
+						"name": "aged_65_older",
+						"type": "String"
+					},
+					{
+						"name": "aged_70_older",
+						"type": "String"
+					},
+					{
+						"name": "gdp_per_capita",
+						"type": "String"
+					},
+					{
+						"name": "extreme_poverty",
+						"type": "String"
+					},
+					{
+						"name": "cardiovasc_death_rate",
+						"type": "String"
+					},
+					{
+						"name": "diabetes_prevalence",
+						"type": "String"
+					},
+					{
+						"name": "female_smokers",
+						"type": "String"
+					},
+					{
+						"name": "male_smokers",
+						"type": "String"
+					},
+					{
+						"name": "handwashing_facilities",
+						"type": "String"
+					},
+					{
+						"name": "hospital_beds_per_thousand",
+						"type": "String"
+					},
+					{
+						"name": "life_expectancy",
+						"type": "String"
+					},
+					{
+						"name": "human_development_index",
+						"type": "String"
+					},
+					{
+						"name": "population",
+						"type": "String"
+					},
+					{
+						"name": "excess_mortality_cumulative_absolute",
+						"type": "String"
+					},
+					{
+						"name": "excess_mortality_cumulative",
+						"type": "String"
+					},
+					{
+						"name": "excess_mortality",
+						"type": "String"
+					},
+					{
+						"name": "excess_mortality_cumulative_per_million",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Ds_url_csv')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"nulo": {
+						"type": "String",
+						"defaultValue": "0"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "owid-covid-data.csv",
+						"folderPath": "bronce/covid/csv",
+						"container": "data"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"nullValue": {
+						"value": "@dataset().nulo",
+						"type": "Expression"
+					},
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "iso_code",
+						"type": "String"
+					},
+					{
+						"name": "continent",
+						"type": "String"
+					},
+					{
+						"name": "location",
+						"type": "String"
+					},
+					{
+						"name": "date",
+						"type": "String"
+					},
+					{
+						"name": "total_cases",
+						"type": "String"
+					},
+					{
+						"name": "new_cases",
+						"type": "String"
+					},
+					{
+						"name": "new_cases_smoothed",
+						"type": "String"
+					},
+					{
+						"name": "total_deaths",
+						"type": "String"
+					},
+					{
+						"name": "new_deaths",
+						"type": "String"
+					},
+					{
+						"name": "new_deaths_smoothed",
+						"type": "String"
+					},
+					{
+						"name": "total_cases_per_million",
+						"type": "String"
+					},
+					{
+						"name": "new_cases_per_million",
+						"type": "String"
+					},
+					{
+						"name": "new_cases_smoothed_per_million",
+						"type": "String"
+					},
+					{
+						"name": "total_deaths_per_million",
+						"type": "String"
+					},
+					{
+						"name": "new_deaths_per_million",
+						"type": "String"
+					},
+					{
+						"name": "new_deaths_smoothed_per_million",
+						"type": "String"
+					},
+					{
+						"name": "reproduction_rate",
+						"type": "String"
+					},
+					{
+						"name": "icu_patients",
+						"type": "String"
+					},
+					{
+						"name": "icu_patients_per_million",
+						"type": "String"
+					},
+					{
+						"name": "hosp_patients",
+						"type": "String"
+					},
+					{
+						"name": "hosp_patients_per_million",
+						"type": "String"
+					},
+					{
+						"name": "weekly_icu_admissions",
+						"type": "String"
+					},
+					{
+						"name": "weekly_icu_admissions_per_million",
+						"type": "String"
+					},
+					{
+						"name": "weekly_hosp_admissions",
+						"type": "String"
+					},
+					{
+						"name": "weekly_hosp_admissions_per_million",
+						"type": "String"
+					},
+					{
+						"name": "total_tests",
+						"type": "String"
+					},
+					{
+						"name": "new_tests",
+						"type": "String"
+					},
+					{
+						"name": "total_tests_per_thousand",
+						"type": "String"
+					},
+					{
+						"name": "new_tests_per_thousand",
+						"type": "String"
+					},
+					{
+						"name": "new_tests_smoothed",
+						"type": "String"
+					},
+					{
+						"name": "new_tests_smoothed_per_thousand",
+						"type": "String"
+					},
+					{
+						"name": "positive_rate",
+						"type": "String"
+					},
+					{
+						"name": "tests_per_case",
+						"type": "String"
+					},
+					{
+						"name": "tests_units",
+						"type": "String"
+					},
+					{
+						"name": "total_vaccinations",
+						"type": "String"
+					},
+					{
+						"name": "people_vaccinated",
+						"type": "String"
+					},
+					{
+						"name": "people_fully_vaccinated",
+						"type": "String"
+					},
+					{
+						"name": "total_boosters",
+						"type": "String"
+					},
+					{
+						"name": "new_vaccinations",
+						"type": "String"
+					},
+					{
+						"name": "new_vaccinations_smoothed",
+						"type": "String"
+					},
+					{
+						"name": "total_vaccinations_per_hundred",
+						"type": "String"
+					},
+					{
+						"name": "people_vaccinated_per_hundred",
+						"type": "String"
+					},
+					{
+						"name": "people_fully_vaccinated_per_hundred",
+						"type": "String"
+					},
+					{
+						"name": "total_boosters_per_hundred",
+						"type": "String"
+					},
+					{
+						"name": "new_vaccinations_smoothed_per_million",
+						"type": "String"
+					},
+					{
+						"name": "new_people_vaccinated_smoothed",
+						"type": "String"
+					},
+					{
+						"name": "new_people_vaccinated_smoothed_per_hundred",
+						"type": "String"
+					},
+					{
+						"name": "stringency_index",
+						"type": "String"
+					},
+					{
+						"name": "population_density",
+						"type": "String"
+					},
+					{
+						"name": "median_age",
+						"type": "String"
+					},
+					{
+						"name": "aged_65_older",
+						"type": "String"
+					},
+					{
+						"name": "aged_70_older",
+						"type": "String"
+					},
+					{
+						"name": "gdp_per_capita",
+						"type": "String"
+					},
+					{
+						"name": "extreme_poverty",
+						"type": "String"
+					},
+					{
+						"name": "cardiovasc_death_rate",
+						"type": "String"
+					},
+					{
+						"name": "diabetes_prevalence",
+						"type": "String"
+					},
+					{
+						"name": "female_smokers",
+						"type": "String"
+					},
+					{
+						"name": "male_smokers",
+						"type": "String"
+					},
+					{
+						"name": "handwashing_facilities",
+						"type": "String"
+					},
+					{
+						"name": "hospital_beds_per_thousand",
+						"type": "String"
+					},
+					{
+						"name": "life_expectancy",
+						"type": "String"
+					},
+					{
+						"name": "human_development_index",
+						"type": "String"
+					},
+					{
+						"name": "population",
+						"type": "String"
+					},
+					{
+						"name": "excess_mortality_cumulative_absolute",
+						"type": "String"
+					},
+					{
+						"name": "excess_mortality_cumulative",
+						"type": "String"
+					},
+					{
+						"name": "excess_mortality",
+						"type": "String"
+					},
+					{
+						"name": "excess_mortality_cumulative_per_million",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Ds_url_file')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LinkHttpServer",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "HttpServerLocation"
+					},
+					"columnDelimiter": ",",
+					"rowDelimiter": "\n",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"nullValue": "0.0",
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "iso_code",
+						"type": "String"
+					},
+					{
+						"name": "continent",
+						"type": "String"
+					},
+					{
+						"name": "location",
+						"type": "String"
+					},
+					{
+						"name": "date",
+						"type": "String"
+					},
+					{
+						"name": "total_cases",
+						"type": "String"
+					},
+					{
+						"name": "new_cases",
+						"type": "String"
+					},
+					{
+						"name": "new_cases_smoothed",
+						"type": "String"
+					},
+					{
+						"name": "total_deaths",
+						"type": "String"
+					},
+					{
+						"name": "new_deaths",
+						"type": "String"
+					},
+					{
+						"name": "new_deaths_smoothed",
+						"type": "String"
+					},
+					{
+						"name": "total_cases_per_million",
+						"type": "String"
+					},
+					{
+						"name": "new_cases_per_million",
+						"type": "String"
+					},
+					{
+						"name": "new_cases_smoothed_per_million",
+						"type": "String"
+					},
+					{
+						"name": "total_deaths_per_million",
+						"type": "String"
+					},
+					{
+						"name": "new_deaths_per_million",
+						"type": "String"
+					},
+					{
+						"name": "new_deaths_smoothed_per_million",
+						"type": "String"
+					},
+					{
+						"name": "reproduction_rate",
+						"type": "String"
+					},
+					{
+						"name": "icu_patients",
+						"type": "String"
+					},
+					{
+						"name": "icu_patients_per_million",
+						"type": "String"
+					},
+					{
+						"name": "hosp_patients",
+						"type": "String"
+					},
+					{
+						"name": "hosp_patients_per_million",
+						"type": "String"
+					},
+					{
+						"name": "weekly_icu_admissions",
+						"type": "String"
+					},
+					{
+						"name": "weekly_icu_admissions_per_million",
+						"type": "String"
+					},
+					{
+						"name": "weekly_hosp_admissions",
+						"type": "String"
+					},
+					{
+						"name": "weekly_hosp_admissions_per_million",
+						"type": "String"
+					},
+					{
+						"name": "total_tests",
+						"type": "String"
+					},
+					{
+						"name": "new_tests",
+						"type": "String"
+					},
+					{
+						"name": "total_tests_per_thousand",
+						"type": "String"
+					},
+					{
+						"name": "new_tests_per_thousand",
+						"type": "String"
+					},
+					{
+						"name": "new_tests_smoothed",
+						"type": "String"
+					},
+					{
+						"name": "new_tests_smoothed_per_thousand",
+						"type": "String"
+					},
+					{
+						"name": "positive_rate",
+						"type": "String"
+					},
+					{
+						"name": "tests_per_case",
+						"type": "String"
+					},
+					{
+						"name": "tests_units",
+						"type": "String"
+					},
+					{
+						"name": "total_vaccinations",
+						"type": "String"
+					},
+					{
+						"name": "people_vaccinated",
+						"type": "String"
+					},
+					{
+						"name": "people_fully_vaccinated",
+						"type": "String"
+					},
+					{
+						"name": "total_boosters",
+						"type": "String"
+					},
+					{
+						"name": "new_vaccinations",
+						"type": "String"
+					},
+					{
+						"name": "new_vaccinations_smoothed",
+						"type": "String"
+					},
+					{
+						"name": "total_vaccinations_per_hundred",
+						"type": "String"
+					},
+					{
+						"name": "people_vaccinated_per_hundred",
+						"type": "String"
+					},
+					{
+						"name": "people_fully_vaccinated_per_hundred",
+						"type": "String"
+					},
+					{
+						"name": "total_boosters_per_hundred",
+						"type": "String"
+					},
+					{
+						"name": "new_vaccinations_smoothed_per_million",
+						"type": "String"
+					},
+					{
+						"name": "new_people_vaccinated_smoothed",
+						"type": "String"
+					},
+					{
+						"name": "new_people_vaccinated_smoothed_per_hundred",
+						"type": "String"
+					},
+					{
+						"name": "stringency_index",
+						"type": "String"
+					},
+					{
+						"name": "population_density",
+						"type": "String"
+					},
+					{
+						"name": "median_age",
+						"type": "String"
+					},
+					{
+						"name": "aged_65_older",
+						"type": "String"
+					},
+					{
+						"name": "aged_70_older",
+						"type": "String"
+					},
+					{
+						"name": "gdp_per_capita",
+						"type": "String"
+					},
+					{
+						"name": "extreme_poverty",
+						"type": "String"
+					},
+					{
+						"name": "cardiovasc_death_rate",
+						"type": "String"
+					},
+					{
+						"name": "diabetes_prevalence",
+						"type": "String"
+					},
+					{
+						"name": "female_smokers",
+						"type": "String"
+					},
+					{
+						"name": "male_smokers",
+						"type": "String"
+					},
+					{
+						"name": "handwashing_facilities",
+						"type": "String"
+					},
+					{
+						"name": "hospital_beds_per_thousand",
+						"type": "String"
+					},
+					{
+						"name": "life_expectancy",
+						"type": "String"
+					},
+					{
+						"name": "human_development_index",
+						"type": "String"
+					},
+					{
+						"name": "population",
+						"type": "String"
+					},
+					{
+						"name": "excess_mortality_cumulative_absolute",
+						"type": "String"
+					},
+					{
+						"name": "excess_mortality_cumulative",
+						"type": "String"
+					},
+					{
+						"name": "excess_mortality",
+						"type": "String"
+					},
+					{
+						"name": "excess_mortality_cumulative_per_million",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LinkHttpServer')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SinkDataset')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Connection to your Azure Data Lake Store",
+				"linkedServiceName": {
+					"referenceName": "LinnkDataLakeStorangel",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Container": {
+						"type": "string",
+						"defaultValue": "data"
+					},
+					"Directory": {
+						"type": "string",
+						"defaultValue": "csv"
+					}
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "bronce/covid/csv",
+						"fileSystem": "data"
+					},
+					"encodingName": "UTF-8"
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LinnkDataLakeStorangel')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureBlobStorage1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('AzureBlobStorage1_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LinkAzureSqlDatabase')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('LinkAzureSqlDatabase_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LinkHttpServer')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "HttpServer",
+				"typeProperties": {
+					"url": "[parameters('LinkHttpServer_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LinnkDataLakeStorangel')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "link que envía información al contenedor",
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('LinnkDataLakeStorangel_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('LinnkDataLakeStorangel_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dataflow')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "Ds_url_csv",
+								"type": "DatasetReference"
+							},
+							"name": "LecturaCovid"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "Ds_silver_csv",
+								"type": "DatasetReference"
+							},
+							"name": "SalidaparaSilver",
+							"rejectedDataLinkedService": {
+								"referenceName": "AzureBlobStorage1",
+								"type": "LinkedServiceReference"
+							}
+						}
+					],
+					"transformations": [
+						{
+							"name": "CreacioNuevaColumanas"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          iso_code as string,",
+						"          continent as string,",
+						"          location as string,",
+						"          date as string,",
+						"          total_cases as string,",
+						"          new_cases as string,",
+						"          new_cases_smoothed as string,",
+						"          total_deaths as string,",
+						"          new_deaths as string,",
+						"          new_deaths_smoothed as string,",
+						"          total_cases_per_million as string,",
+						"          new_cases_per_million as string,",
+						"          new_cases_smoothed_per_million as string,",
+						"          total_deaths_per_million as string,",
+						"          new_deaths_per_million as string,",
+						"          new_deaths_smoothed_per_million as string,",
+						"          reproduction_rate as string,",
+						"          icu_patients as string,",
+						"          icu_patients_per_million as string,",
+						"          hosp_patients as string,",
+						"          hosp_patients_per_million as string,",
+						"          weekly_icu_admissions as string,",
+						"          weekly_icu_admissions_per_million as string,",
+						"          weekly_hosp_admissions as string,",
+						"          weekly_hosp_admissions_per_million as string,",
+						"          total_tests as string,",
+						"          new_tests as string,",
+						"          total_tests_per_thousand as string,",
+						"          new_tests_per_thousand as string,",
+						"          new_tests_smoothed as string,",
+						"          new_tests_smoothed_per_thousand as string,",
+						"          positive_rate as string,",
+						"          tests_per_case as string,",
+						"          tests_units as string,",
+						"          total_vaccinations as string,",
+						"          people_vaccinated as string,",
+						"          people_fully_vaccinated as string,",
+						"          total_boosters as string,",
+						"          new_vaccinations as string,",
+						"          new_vaccinations_smoothed as string,",
+						"          total_vaccinations_per_hundred as string,",
+						"          people_vaccinated_per_hundred as string,",
+						"          people_fully_vaccinated_per_hundred as string,",
+						"          total_boosters_per_hundred as string,",
+						"          new_vaccinations_smoothed_per_million as string,",
+						"          new_people_vaccinated_smoothed as string,",
+						"          new_people_vaccinated_smoothed_per_hundred as string,",
+						"          stringency_index as string,",
+						"          population_density as string,",
+						"          median_age as string,",
+						"          aged_65_older as string,",
+						"          aged_70_older as string,",
+						"          gdp_per_capita as string,",
+						"          extreme_poverty as string,",
+						"          cardiovasc_death_rate as string,",
+						"          diabetes_prevalence as string,",
+						"          female_smokers as string,",
+						"          male_smokers as string,",
+						"          handwashing_facilities as string,",
+						"          hospital_beds_per_thousand as string,",
+						"          life_expectancy as string,",
+						"          human_development_index as string,",
+						"          population as string,",
+						"          excess_mortality_cumulative_absolute as string,",
+						"          excess_mortality_cumulative as string,",
+						"          excess_mortality as string,",
+						"          excess_mortality_cumulative_per_million as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> LecturaCovid",
+						"LecturaCovid derive(Anio = toInteger(trim(left(date, 4))),",
+						"          Mes = toInteger(trim(right(left(date,7),2)))) ~> CreacioNuevaColumanas",
+						"CreacioNuevaColumanas sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          continent as string,",
+						"          location as string,",
+						"          date as string,",
+						"          total_cases as string,",
+						"          new_cases as string,",
+						"          new_cases_smoothed as string,",
+						"          total_deaths as string,",
+						"          new_deaths as string,",
+						"          new_deaths_smoothed as string,",
+						"          total_cases_per_million as string,",
+						"          new_cases_per_million as string,",
+						"          new_cases_smoothed_per_million as string,",
+						"          total_deaths_per_million as string,",
+						"          new_deaths_per_million as string,",
+						"          new_deaths_smoothed_per_million as string,",
+						"          reproduction_rate as string,",
+						"          icu_patients as string,",
+						"          icu_patients_per_million as string,",
+						"          hosp_patients as string,",
+						"          hosp_patients_per_million as string,",
+						"          weekly_icu_admissions as string,",
+						"          weekly_icu_admissions_per_million as string,",
+						"          weekly_hosp_admissions as string,",
+						"          weekly_hosp_admissions_per_million as string,",
+						"          total_tests as string,",
+						"          new_tests as string,",
+						"          total_tests_per_thousand as string,",
+						"          new_tests_per_thousand as string,",
+						"          new_tests_smoothed as string,",
+						"          new_tests_smoothed_per_thousand as string,",
+						"          positive_rate as string,",
+						"          tests_per_case as string,",
+						"          tests_units as string,",
+						"          total_vaccinations as string,",
+						"          people_vaccinated as string,",
+						"          people_fully_vaccinated as string,",
+						"          total_boosters as string,",
+						"          new_vaccinations as string,",
+						"          new_vaccinations_smoothed as string,",
+						"          total_vaccinations_per_hundred as string,",
+						"          people_vaccinated_per_hundred as string,",
+						"          people_fully_vaccinated_per_hundred as string,",
+						"          total_boosters_per_hundred as string,",
+						"          new_vaccinations_smoothed_per_million as string,",
+						"          new_people_vaccinated_smoothed as string,",
+						"          new_people_vaccinated_smoothed_per_hundred as string,",
+						"          stringency_index as string,",
+						"          population_density as string,",
+						"          median_age as string,",
+						"          aged_65_older as string,",
+						"          aged_70_older as string,",
+						"          gdp_per_capita as string,",
+						"          extreme_poverty as string,",
+						"          cardiovasc_death_rate as string,",
+						"          diabetes_prevalence as string,",
+						"          female_smokers as string,",
+						"          male_smokers as string,",
+						"          handwashing_facilities as string,",
+						"          hospital_beds_per_thousand as string,",
+						"          life_expectancy as string,",
+						"          human_development_index as string,",
+						"          population as string,",
+						"          excess_mortality_cumulative_absolute as string,",
+						"          excess_mortality_cumulative as string,",
+						"          excess_mortality as string,",
+						"          excess_mortality_cumulative_per_million as string",
+						"     ),",
+						"     partitionFileNames:['covid_global.csv'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     mapColumn(",
+						"          each(match(/* All input columns */true()),",
+						"               /* Input name */$$ = $$)",
+						"     ),",
+						"     partitionBy('hash', 1)) ~> SalidaparaSilver"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Ds_url_csv')]",
+				"[concat(variables('factoryId'), '/datasets/Ds_silver_csv')]",
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dataflowSilver')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Agregación de datos por año y mes",
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "Ds_Parquet_SIilver",
+								"type": "DatasetReference"
+							},
+							"name": "LecturaPaquetSIlver"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "Ds_Parquet_SIilver",
+								"type": "DatasetReference"
+							},
+							"name": "FlTotalcasosCovid",
+							"rejectedDataLinkedService": {
+								"referenceName": "LinnkDataLakeStorangel",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"dataset": {
+								"referenceName": "Ds_Parquet_SIilver",
+								"type": "DatasetReference"
+							},
+							"name": "FiTotalesCasosAntecedente",
+							"rejectedDataLinkedService": {
+								"referenceName": "LinnkDataLakeStorangel",
+								"type": "LinkedServiceReference"
+							}
+						}
+					],
+					"transformations": [
+						{
+							"name": "AgregacionAnioLocacion"
+						},
+						{
+							"name": "AgregacionAntecedentes",
+							"description": "Agregar columnas de agregado personas con antecedentes"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          continent as string,",
+						"          location as string,",
+						"          date as timestamp,",
+						"          total_cases as double,",
+						"          new_cases as double,",
+						"          new_cases_smoothed as double,",
+						"          total_deaths as double,",
+						"          new_deaths as double,",
+						"          total_cases_per_million as double,",
+						"          new_cases_per_million as double,",
+						"          total_deaths_per_million as double,",
+						"          new_deaths_per_million as double,",
+						"          new_people_vaccinated_smoothed_per_hundred as double,",
+						"          stringency_index as double,",
+						"          population_density as double,",
+						"          median_age as double,",
+						"          aged_65_older as double,",
+						"          aged_70_older as double,",
+						"          gdp_per_capita as double,",
+						"          extreme_poverty as double,",
+						"          cardiovasc_death_rate as double,",
+						"          diabetes_prevalence as double,",
+						"          female_smokers as double,",
+						"          male_smokers as double,",
+						"          handwashing_facilities as double,",
+						"          hospital_beds_per_thousand as double,",
+						"          life_expectancy as double,",
+						"          human_development_index as double,",
+						"          population as double,",
+						"          excess_mortality_cumulative_absolute as double,",
+						"          excess_mortality_cumulative as double,",
+						"          excess_mortality as double,",
+						"          excess_mortality_cumulative_per_million as double,",
+						"          Anio as integer,",
+						"          Mes as integer",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'parquet',",
+						"     partitionBy('hash', 1)) ~> LecturaPaquetSIlver",
+						"LecturaPaquetSIlver aggregate(groupBy(Mes,",
+						"          Anio,",
+						"          continent,",
+						"          location),",
+						"     total_cases = sum(total_cases),",
+						"          new_cases = sum(new_cases),",
+						"          total_deaths = sum(total_deaths),",
+						"          new_deaths = sum(new_deaths),",
+						"          total_cases_per_million = sum(total_cases_per_million),",
+						"          new_cases_per_million = sum(new_cases_per_million),",
+						"          total_deaths_per_million = sum(total_deaths_per_million),",
+						"          new_deaths_per_million = sum(new_deaths_per_million),",
+						"          new_people_vaccinated_smoothed_per_hundred = sum(new_people_vaccinated_smoothed_per_hundred),",
+						"          population_density = sum(population_density),",
+						"     partitionBy('hash', 1)) ~> AgregacionAnioLocacion",
+						"LecturaPaquetSIlver aggregate(groupBy(Anio,",
+						"          Mes,",
+						"          continent,",
+						"          location),",
+						"     population_density = sum(population_density),",
+						"          median_age = sum(median_age),",
+						"          cardiovasc_death_rate = sum(cardiovasc_death_rate),",
+						"          diabetes_prevalence = sum(diabetes_prevalence),",
+						"          female_smokers = sum(female_smokers),",
+						"          male_smokers = sum(male_smokers),",
+						"          handwashing_facilities = sum(handwashing_facilities),",
+						"          hospital_beds_per_thousand = sum(hospital_beds_per_thousand),",
+						"          population = sum(population),",
+						"          excess_mortality_cumulative_absolute = sum(excess_mortality_cumulative_absolute),",
+						"          excess_mortality_cumulative = sum(excess_mortality_cumulative),",
+						"          excess_mortality = sum(excess_mortality),",
+						"          excess_mortality_cumulative_per_million = sum(excess_mortality_cumulative_per_million),",
+						"     partitionBy('hash', 1)) ~> AgregacionAntecedentes",
+						"AgregacionAnioLocacion sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'parquet',",
+						"     partitionFileNames:['Total_caso_covid'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> FlTotalcasosCovid",
+						"AgregacionAntecedentes sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'parquet',",
+						"     partitionFileNames:['Total_caso_covid_antecedente'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> FiTotalesCasosAntecedente"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Ds_Parquet_SIilver')]",
+				"[concat(variables('factoryId'), '/linkedServices/LinnkDataLakeStorangel')]"
+			]
+		}
+	]
+}
