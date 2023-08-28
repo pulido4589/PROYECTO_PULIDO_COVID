@@ -6,6 +6,8 @@
 				"name": "Copy Data Bronce",
 				"description": "copia archivo para análisis desde una url",
 				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "7.00:00:00",
@@ -903,6 +905,8 @@
 			{
 				"name": "Copy data Parquet Silver",
 				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "Data_flow_Silver",
@@ -1443,8 +1447,10 @@
 			},
 			{
 				"name": "Copy data Gold Totales Antecedentes",
-				"description": "Caos totales covid Antecedentes",
+				"description": "Casos totales covid Antecedentes",
 				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "Copy data Gold Totales",
@@ -1725,6 +1731,8 @@
 				"name": "Copy data Gold Totales",
 				"description": "Totales covid",
 				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "Flufo Dato Silver Agregacion",
@@ -1983,6 +1991,8 @@
 			{
 				"name": "Trasformacion para Gold",
 				"type": "DatabricksNotebook",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "Flufo Dato Silver Agregacion",
